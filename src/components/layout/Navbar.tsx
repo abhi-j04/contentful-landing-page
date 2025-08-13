@@ -1,32 +1,138 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { NavigationEntry } from '@/types/contentful';
+
+interface NavItem {
+  label: string;
+  href: string;
+  dropdown?: { label: string; href: string; }[];
+}
+
+interface LogoData {
+  url: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+interface CTAData {
+  text: string;
+  href: string;
+}
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [navigationData, setNavigationData] = useState<NavigationEntry | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch navigation data from API
+  useEffect(() => {
+    async function fetchNavigationData() {
+      try {
+        const response = await fetch('/api/navigation');
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          setNavigationData(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching navigation:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchNavigationData();
+  }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => {
     setIsMenuOpen(false);
-    setIsDropdownOpen(false);
+    setOpenDropdown(null);
   };
 
-  const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/' },
-    {
-      label: 'Services',
-      href: '/',
-      dropdown: [
-        { label: 'Web Development', href: '/' },
-        { label: 'Mobile Apps', href: '/' },
-        { label: 'Consulting', href: '/' },
-        { label: 'Support', href: '/' },
-      ],
-    },
-  ];
+  // Transform Contentful data to component format
+  const getNavItems = (): NavItem[] => {
+    if (!navigationData?.fields.menuItems) return [];
+
+    return navigationData.fields.menuItems
+      .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
+      .map(item => {
+        const baseItem: NavItem = {
+          label: item.fields.label,
+          href: item.fields.link || '/',
+        };
+
+        if (item.fields.type === 'dropdown' && item.fields.dropdownItems?.length) {
+          baseItem.dropdown = item.fields.dropdownItems
+            .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
+            .map(dropdownItem => ({
+              label: dropdownItem.fields.label,
+              href: dropdownItem.fields.link,
+            }));
+        }
+
+        return baseItem;
+      });
+  };
+
+  // Get logo data from Contentful
+  const getLogoData = (): LogoData | null => {
+    if (!navigationData?.fields.logo?.fields?.file) return null;
+    
+    const logo = navigationData.fields.logo;
+    const file = logo.fields.file;
+    
+    // Additional safety check and type assertion
+    if (!file || !file.url) return null;
+    
+    const details = file.details as any; // Type assertion for Contentful asset details
+    
+    return {
+      url: `https:${file.url}`,
+      alt: (logo.fields.title as string) || navigationData.fields.title || 'Logo',
+      width: details?.image?.width || 160,
+      height: details?.image?.height || 40,
+    };
+  };
+
+  // Get CTA data from Contentful
+  const getCTAData = (): CTAData | null => {
+    if (!navigationData?.fields.ctaText) return null;
+    
+    return {
+      text: navigationData.fields.ctaText,
+      href: navigationData.fields.ctaLink || '/contact',
+    };
+  };
+
+  const navItems = getNavItems();
+  const logoData = getLogoData();
+  const ctaData = getCTAData();
+
+  // Loading skeleton
+  if (loading) {
+    return (
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="animate-pulse">
+              <div className="w-32 h-8 bg-gray-200 rounded"></div>
+            </div>
+            <div className="hidden lg:flex space-x-8">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        </nav>
+      </header>
+    );
+  }
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -34,10 +140,23 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center" onClick={closeMenu}>
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
-              <span className="text-white font-bold text-lg">L</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">LandingPro</span>
+            {logoData ? (
+              <Image
+                src={logoData.url}
+                alt={logoData.alt}
+                width={logoData.width}
+                height={logoData.height}
+                className="h-8 w-auto max-w-[160px]"
+                priority
+              />
+            ) : (
+              <>
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
+                  <span className="text-white font-bold text-lg">L</span>
+                </div>
+                <span className="text-xl font-bold text-gray-900">LandingPro</span>
+              </>
+            )}
           </Link>
 
           {/* Desktop Navigation */}
@@ -75,12 +194,15 @@ const Navbar = () => {
               </div>
             ))}
 
-            <Link
-              href="/"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-            >
-              Contact Us
-            </Link>
+            {/* CTA Button */}
+            {ctaData && (
+              <Link
+                href={ctaData.href}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+              >
+                {ctaData.text}
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -111,15 +233,20 @@ const Navbar = () => {
                       {item.dropdown ? (
                         <div>
                           <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
                             className="flex items-center justify-between w-full text-left text-gray-700 hover:text-blue-600 px-3 py-3 text-base font-medium transition-colors duration-200"
                           >
                             {item.label}
-                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg 
+                              className={`h-5 w-5 transform transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''}`} 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           </button>
-                          {isDropdownOpen && (
+                          {openDropdown === item.label && (
                             <div className="pl-6 space-y-1">
                               {item.dropdown.map((dropdownItem) => (
                                 <Link
@@ -146,15 +273,19 @@ const Navbar = () => {
                     </div>
                   ))}
                 </div>
-                <div className="pt-6 border-t border-gray-200">
-                  <Link
-                    href="/"
-                    className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center px-6 py-3 rounded-lg text-base font-medium transition-colors duration-200"
-                    onClick={closeMenu}
-                  >
-                    Contact Us
-                  </Link>
-                </div>
+                
+                {/* Mobile CTA Button */}
+                {ctaData && (
+                  <div className="pt-6 border-t border-gray-200">
+                    <Link
+                      href={ctaData.href}
+                      className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center px-6 py-3 rounded-lg text-base font-medium transition-colors duration-200"
+                      onClick={closeMenu}
+                    >
+                      {ctaData.text}
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>
