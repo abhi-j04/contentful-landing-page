@@ -1,38 +1,28 @@
 import { createClient } from 'contentful';
 
-// Validate environment variables
-const requiredEnvVars = {
-  CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-  CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
-  CONTENTFUL_PREVIEW_ACCESS_TOKEN: process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN,
-};
+// Only create client if environment variables are available
+function createContentfulClient(isPreview = false) {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID;
+  const accessToken = isPreview 
+    ? process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
+    : process.env.CONTENTFUL_ACCESS_TOKEN;
 
-// Check for missing environment variables
-const missingEnvVars = Object.entries(requiredEnvVars)
-  .filter(([, value]) => !value)
-  .map(([key]) => key);
+  if (!spaceId || !accessToken) {
+    console.warn('Contentful configuration missing, using mock client');
+    return null;
+  }
 
-if (missingEnvVars.length > 0) {
-  throw new Error(
-    `Missing required environment variables: ${missingEnvVars.join(', ')}`
-  );
-}
-
-// Create client with error handling
-const createContentfulClient = (isPreview = false) => {
   try {
     return createClient({
-      space: requiredEnvVars.CONTENTFUL_SPACE_ID!,
-      accessToken: isPreview 
-        ? requiredEnvVars.CONTENTFUL_PREVIEW_ACCESS_TOKEN!
-        : requiredEnvVars.CONTENTFUL_ACCESS_TOKEN!,
+      space: spaceId,
+      accessToken: accessToken,
       ...(isPreview && { host: 'preview.contentful.com' }),
     });
   } catch (error) {
     console.error('Failed to create Contentful client:', error);
-    throw error;
+    return null;
   }
-};
+}
 
 export const client = createContentfulClient();
 export const previewClient = createContentfulClient(true);

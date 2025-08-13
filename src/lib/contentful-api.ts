@@ -17,6 +17,14 @@ export async function fetchEntriesByType(
   try {
     const contentfulClient = options.preview ? previewClient : client;
     
+    if (!contentfulClient) {
+      return {
+        success: false,
+        error: 'Contentful client not available',
+        data: [],
+      };
+    }
+    
     const response = await contentfulClient.getEntries({
       content_type: contentType,
       include: 3,
