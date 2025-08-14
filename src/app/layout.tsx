@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Layout } from '@/components/layout'
+import { fetchFooterSection } from '@/lib/contentful-api'
 import './globals.css'
 
 const inter = Inter({ 
@@ -21,28 +22,24 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Fetch footer data on server-side
+  const footerResult = await fetchFooterSection();
+  const footerData = footerResult.success ? footerResult.data : null;
+
   return (
     <html lang="en">
       <head>
         {/* Critical resource hints */}
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="//images.unsplash.com" />
-        
-        {/* Preload critical mobile hero image */}
-        <link
-          rel="preload"
-          as="image"
-          href="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=75"
-          media="(max-width: 768px)"
-        />
+        <link rel="preconnect" href="https://images.ctfassets.net" />
+        <link rel="dns-prefetch" href="//images.ctfassets.net" />
       </head>
       <body className={inter.className}>
-        <Layout>
+        <Layout footerData={footerData}>
           {children}
         </Layout>
       </body>

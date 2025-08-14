@@ -9,6 +9,10 @@ export * from './carouselSlide';
 export * from './carouselSection';
 export * from './serviceItem';
 export * from './servicesSection';
+export * from './footerLink';
+export * from './footerLinkGroup';
+export * from './socialLink';
+export * from './footerSection';
 
 // Model registry for deployment
 import { dropdownItemModel, DROPDOWN_ITEM_ID } from './dropdownItem';
@@ -21,6 +25,10 @@ import { carouselSlideModel, CAROUSEL_SLIDE_ID } from './carouselSlide';
 import { carouselSectionModel, CAROUSEL_SECTION_ID } from './carouselSection';
 import { serviceItemModel, SERVICE_ITEM_ID } from './serviceItem';
 import { servicesSectionModel, SERVICES_SECTION_ID } from './servicesSection';
+import { footerLinkModel, FOOTER_LINK_ID } from './footerLink';
+import { footerLinkGroupModel, FOOTER_LINK_GROUP_ID } from './footerLinkGroup';
+import { socialLinkModel, SOCIAL_LINK_ID } from './socialLink';
+import { footerSectionModel, FOOTER_SECTION_ID } from './footerSection';
 import { ContentTypeProps } from 'contentful-management';
 
 export interface ModelDefinition {
@@ -74,11 +82,31 @@ export const modelRegistry: ModelDefinition[] = [
   {
     id: SERVICE_ITEM_ID,
     model: serviceItemModel,
-    dependencies: [] // Independent component
+    dependencies: []
   },
   {
     id: SERVICES_SECTION_ID,
     model: servicesSectionModel,
-    dependencies: [SERVICE_ITEM_ID] // Depends on service items
+    dependencies: [SERVICE_ITEM_ID]
+  },
+  {
+    id: FOOTER_LINK_ID,
+    model: footerLinkModel,
+    dependencies: [] // Independent component
+  },
+  {
+    id: SOCIAL_LINK_ID,
+    model: socialLinkModel,
+    dependencies: [] // Independent component
+  },
+  {
+    id: FOOTER_LINK_GROUP_ID,
+    model: footerLinkGroupModel,
+    dependencies: [FOOTER_LINK_ID] // Depends on footer links
+  },
+  {
+    id: FOOTER_SECTION_ID,
+    model: footerSectionModel,
+    dependencies: [FOOTER_LINK_GROUP_ID, SOCIAL_LINK_ID] // Depends on groups and social links
   }
 ];

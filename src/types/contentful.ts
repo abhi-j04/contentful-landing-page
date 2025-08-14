@@ -161,6 +161,65 @@ export interface ServicesSectionEntry {
   fields: ServicesSectionFields;
 }
 
+// Footer Link types
+export interface FooterLinkFields {
+  label: string;
+  url: string;
+  openInNewTab?: boolean;
+  order: number;
+}
+
+// Footer Link Group types  
+export interface FooterLinkGroupFields {
+  title: string;
+  links: FooterLinkEntry[];
+  order: number;
+}
+
+// Social Link types
+export interface SocialLinkFields {
+  platform: string;
+  url: string;
+  icon: 'twitter' | 'linkedin' | 'github' | 'facebook' | 'instagram' | 'youtube' | 'dribbble' | 'behance';
+  order: number;
+}
+
+// Footer Section types
+export interface FooterSectionFields {
+  companyName: string;
+  companyLogo?: Asset;
+  companyDescription: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  linkGroups: FooterLinkGroupEntry[];
+  socialLinks?: SocialLinkEntry[];
+  copyrightText: string;
+  showBackToTop?: boolean;
+  backgroundColor?: 'dark' | 'light' | 'blue' | 'custom';
+}
+
+// Entry interfaces
+export interface FooterLinkEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: FooterLinkFields;
+}
+
+export interface FooterLinkGroupEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: FooterLinkGroupFields;
+}
+
+export interface SocialLinkEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: SocialLinkFields;
+}
+
+export interface FooterSectionEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: FooterSectionFields;
+}
+
 // Content model constants
 export const CONTENT_TYPES = {
   DROPDOWN_ITEM: 'dropdownItem',
@@ -174,6 +233,10 @@ export const CONTENT_TYPES = {
   FEATURE: 'feature',
   SERVICE_ITEM: 'serviceItem',
   SERVICES_SECTION: 'servicesSection',
+  FOOTER_LINK: 'footerLink',
+  FOOTER_LINK_GROUP: 'footerLinkGroup',
+  SOCIAL_LINK: 'socialLink',
+  FOOTER_SECTION: 'footerSection',
 } as const;
 
 export type ContentType = typeof CONTENT_TYPES[keyof typeof CONTENT_TYPES];
