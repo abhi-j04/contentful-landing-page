@@ -23,6 +23,39 @@ export interface NavigationFields {
   ctaLink?: string;
 }
 
+// CTA Button types
+export interface CtaButtonFields {
+  text: string;
+  link: string;
+  style: 'primary' | 'secondary' | 'outline';
+  openInNewTab?: boolean;
+}
+
+// Company Logo types
+export interface CompanyLogoFields {
+  name: string;
+  logo: Asset;
+  altText: string;
+  website?: string;
+}
+
+// Hero Section types (Updated to match our model)
+export interface HeroSectionFields {
+  title: string;
+  highlightedTitle: string;
+  subtitleMobile: string;
+  subtitleDesktop: string;
+  backgroundImageMobile: Asset;
+  backgroundImageDesktop: Asset;
+  backgroundImageAlt: string;
+  primaryCta: CtaButtonEntry;
+  secondaryCta?: CtaButtonEntry;
+  showTrustSection?: boolean;
+  trustSectionTitle?: string;
+  companyLogos?: CompanyLogoEntry[];
+}
+
+// Entry interfaces
 export interface DropdownItemEntry {
   sys: { id: string; contentType: { sys: { id: string } } };
   fields: DropdownItemFields;
@@ -38,13 +71,14 @@ export interface NavigationEntry {
   fields: NavigationFields;
 }
 
-// Hero Section types
-export interface HeroSectionFields {
-  title: string;
-  subtitle: string;
-  ctaText: string;
-  ctaUrl: string;
-  backgroundImage?: Asset;
+export interface CtaButtonEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: CtaButtonFields;
+}
+
+export interface CompanyLogoEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: CompanyLogoFields;
 }
 
 export interface HeroSectionEntry {
@@ -70,6 +104,8 @@ export const CONTENT_TYPES = {
   DROPDOWN_ITEM: 'dropdownItem',
   MENU_ITEM: 'menuItem',
   NAVIGATION: 'navigation',
+  CTA_BUTTON: 'ctaButton',
+  COMPANY_LOGO: 'companyLogo',
   HERO_SECTION: 'heroSection',
   FEATURE: 'feature',
 } as const;
