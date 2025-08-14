@@ -7,6 +7,8 @@ export * from './companyLogo';
 export * from './heroSection';
 export * from './carouselSlide';
 export * from './carouselSection';
+export * from './serviceItem';
+export * from './servicesSection';
 
 // Model registry for deployment
 import { dropdownItemModel, DROPDOWN_ITEM_ID } from './dropdownItem';
@@ -17,6 +19,8 @@ import { companyLogoModel, COMPANY_LOGO_ID } from './companyLogo';
 import { heroSectionModel, HERO_SECTION_ID } from './heroSection';
 import { carouselSlideModel, CAROUSEL_SLIDE_ID } from './carouselSlide';
 import { carouselSectionModel, CAROUSEL_SECTION_ID } from './carouselSection';
+import { serviceItemModel, SERVICE_ITEM_ID } from './serviceItem';
+import { servicesSectionModel, SERVICES_SECTION_ID } from './servicesSection';
 import { ContentTypeProps } from 'contentful-management';
 
 export interface ModelDefinition {
@@ -60,11 +64,21 @@ export const modelRegistry: ModelDefinition[] = [
   {
     id: CAROUSEL_SLIDE_ID,
     model: carouselSlideModel,
-    dependencies: [] // Independent component
+    dependencies: []
   },
   {
     id: CAROUSEL_SECTION_ID,
     model: carouselSectionModel,
-    dependencies: [CAROUSEL_SLIDE_ID] // Depends on carousel slides
+    dependencies: [CAROUSEL_SLIDE_ID]
+  },
+  {
+    id: SERVICE_ITEM_ID,
+    model: serviceItemModel,
+    dependencies: [] // Independent component
+  },
+  {
+    id: SERVICES_SECTION_ID,
+    model: servicesSectionModel,
+    dependencies: [SERVICE_ITEM_ID] // Depends on service items
   }
 ];

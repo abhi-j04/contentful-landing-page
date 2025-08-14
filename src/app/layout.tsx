@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Layout } from '@/components/layout'
 import './globals.css'
@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   description: 'A modern, responsive landing page showcasing professional web development skills',
   keywords: ['landing page', 'nextjs', 'contentful', 'typescript', 'tailwind'],
   authors: [{ name: 'Abhishek' }],
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({

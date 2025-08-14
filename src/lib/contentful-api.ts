@@ -1,5 +1,5 @@
 import client, { previewClient } from './contentful';
-import { CONTENT_TYPES, HeroSectionEntry, CarouselSectionEntry } from '@/types/contentful';
+import { CONTENT_TYPES, HeroSectionEntry, CarouselSectionEntry, ServicesSectionEntry } from '@/types/contentful';
 
 interface FetchOptions {
   preview?: boolean;
@@ -92,5 +92,21 @@ export async function fetchCarouselSection(options: FetchOptions = {}) {
   return {
     ...result,
     data: (result.data[0] as unknown as CarouselSectionEntry) || null,
+  };
+}
+
+/**
+ * Fetch services section entry
+ */
+export async function fetchServicesSection(options: FetchOptions = {}) {
+  const result = await fetchEntriesByType(CONTENT_TYPES.SERVICES_SECTION, {
+    ...options,
+    limit: 1,
+    order: ['-sys.createdAt'],
+  });
+  
+  return {
+    ...result,
+    data: (result.data[0] as unknown as ServicesSectionEntry) || null,
   };
 }

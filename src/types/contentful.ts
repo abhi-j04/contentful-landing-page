@@ -1,4 +1,5 @@
 import { Asset } from 'contentful';
+import { Document } from '@contentful/rich-text-types';
 
 // Navigation types
 export interface DropdownItemFields {
@@ -130,6 +131,36 @@ export interface FeatureEntry {
   fields: FeatureFields;
 }
 
+// Service Item types
+export interface ServiceItemFields {
+  title: string;
+  content: Document; // RichText content
+  image: Asset;
+  imageAlt: string;
+  order: number;
+  featured?: boolean;
+}
+
+// Services Section types
+export interface ServicesSectionFields {
+  title: string;
+  subtitle: string;
+  services: ServiceItemEntry[];
+  backgroundColor?: 'gray' | 'white' | 'blue' | 'custom';
+  layout?: 'alternating' | 'uniform-left' | 'uniform-right';
+}
+
+// Entry interfaces
+export interface ServiceItemEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: ServiceItemFields;
+}
+
+export interface ServicesSectionEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: ServicesSectionFields;
+}
+
 // Content model constants
 export const CONTENT_TYPES = {
   DROPDOWN_ITEM: 'dropdownItem',
@@ -141,6 +172,8 @@ export const CONTENT_TYPES = {
   CAROUSEL_SLIDE: 'carouselSlide',
   CAROUSEL_SECTION: 'carouselSection',
   FEATURE: 'feature',
+  SERVICE_ITEM: 'serviceItem',
+  SERVICES_SECTION: 'servicesSection',
 } as const;
 
 export type ContentType = typeof CONTENT_TYPES[keyof typeof CONTENT_TYPES];
