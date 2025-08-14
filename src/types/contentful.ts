@@ -55,6 +55,27 @@ export interface HeroSectionFields {
   companyLogos?: CompanyLogoEntry[];
 }
 
+// Carousel Slide types
+export interface CarouselSlideFields {
+  title: string;
+  image: Asset;
+  altText: string;
+  description?: string;
+  link?: string;
+  order: number;
+}
+
+// Carousel Section types
+export interface CarouselSectionFields {
+  title: string;
+  subtitle: string;
+  slides: CarouselSlideEntry[];
+  autoAdvance?: boolean;
+  autoAdvanceInterval?: number;
+  showThumbnails?: boolean;
+  showIndicators?: boolean;
+}
+
 // Entry interfaces
 export interface DropdownItemEntry {
   sys: { id: string; contentType: { sys: { id: string } } };
@@ -86,6 +107,16 @@ export interface HeroSectionEntry {
   fields: HeroSectionFields;
 }
 
+export interface CarouselSlideEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: CarouselSlideFields;
+}
+
+export interface CarouselSectionEntry {
+  sys: { id: string; contentType: { sys: { id: string } } };
+  fields: CarouselSectionFields;
+}
+
 // Feature types
 export interface FeatureFields {
   title: string;
@@ -107,6 +138,8 @@ export const CONTENT_TYPES = {
   CTA_BUTTON: 'ctaButton',
   COMPANY_LOGO: 'companyLogo',
   HERO_SECTION: 'heroSection',
+  CAROUSEL_SLIDE: 'carouselSlide',
+  CAROUSEL_SECTION: 'carouselSection',
   FEATURE: 'feature',
 } as const;
 

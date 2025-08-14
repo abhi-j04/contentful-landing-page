@@ -1,9 +1,15 @@
 import { HeroSection, CarouselSection, ServicesSection } from '@/components/sections';
-import { fetchHeroSection } from '@/lib/contentful-api';
+import { fetchHeroSection, fetchCarouselSection } from '@/lib/contentful-api';
 
 export default async function Home() {
-  const heroResult = await fetchHeroSection();
+  // Server-side data fetching
+  const [heroResult, carouselResult] = await Promise.all([
+    fetchHeroSection(),
+    fetchCarouselSection()
+  ]);
+  
   const heroData = heroResult.success ? heroResult.data : null;
+  const carouselData = carouselResult.success ? carouselResult.data : null;
   
   // Extract image URLs for preloading
   const mobileImageUrl = heroData?.fields.backgroundImageMobile?.fields?.file?.url;
@@ -30,7 +36,7 @@ export default async function Home() {
       )}
       
       <HeroSection initialData={heroData} />
-      <CarouselSection />
+      <CarouselSection initialData={carouselData} />
       <ServicesSection />
     </>
   );

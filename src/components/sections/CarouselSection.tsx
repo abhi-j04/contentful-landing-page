@@ -2,52 +2,61 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { CarouselSectionEntry } from '@/types/contentful';
 
-const CarouselSection = () => {
+interface SlideData {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  description?: string | undefined; // Add | undefined
+  link?: string | undefined; // Add | undefined
+  order: number;
+}
+
+interface CarouselSectionProps {
+  initialData?: CarouselSectionEntry | null;
+}
+
+const CarouselSection = ({ initialData }: CarouselSectionProps) => {
+  const carouselData = initialData;
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Optimized carousel images with smaller initial sizes
-  const slides = [
-    {
-      id: 1,
-      src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      alt: 'Business Analytics Dashboard',
-      title: 'Data Visualization'
-    },
-    {
-      id: 2,
-      src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      alt: 'Modern Office Workspace',
-      title: 'Workspace Design'
-    },
-    {
-      id: 3,
-      src: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      alt: 'Technology Innovation',
-      title: 'Tech Innovation'
-    },
-    {
-      id: 4,
-      src: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      alt: 'Mobile App Development',
-      title: 'Mobile Development'
-    },
-    {
-      id: 5,
-      src: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      alt: 'Web Development',
-      title: 'Web Solutions'
-    }
-  ];
+  // Transform Contentful data to component format
+  const getSlides = (): SlideData[] => {
+    if (!carouselData?.fields.slides?.length) return [];
+
+    return carouselData.fields.slides
+      .filter(slide => slide?.fields?.image?.fields?.file) // Filter out invalid slides
+      .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0)) // Sort by order
+      .map(slide => ({
+        id: slide.sys.id,
+        src: `https:${slide.fields?.image?.fields?.file?.url}`,
+        alt: slide.fields.altText,
+        title: slide.fields.title,
+        description: slide.fields.description,
+        link: slide.fields.link,
+        order: slide.fields.order
+      }));
+  };
+
+  const slides = getSlides();
+  const autoAdvance = carouselData?.fields.autoAdvance ?? true;
+  const autoAdvanceInterval = (carouselData?.fields.autoAdvanceInterval ?? 5) * 1000;
+  const showThumbnails = carouselData?.fields.showThumbnails ?? true;
+  const showIndicators = carouselData?.fields.showIndicators ?? true;
 
   // Auto-advance carousel
   useEffect(() => {
+    if (!autoAdvance || slides.length <= 1) return;
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, autoAdvanceInterval);
 
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [slides.length, autoAdvance, autoAdvanceInterval]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
@@ -61,16 +70,82 @@ const CarouselSection = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
+  // Fallback content when no Contentful data
+  if (!carouselData || slides.length === 0) {
+    return (
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              Our Work
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+              Explore our portfolio of successful projects and digital solutions.
+            </p>
+          </div>
+          <div className="text-center text-gray-500">
+            <p>Carousel content coming soon...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const renderSlideContent = (slide: SlideData, index: number) => {
+    const slideContent = (
+      <>
+        <Image
+          src={slide.src}
+          alt={slide.alt}
+          fill
+          className="object-cover"
+          loading={index <= 1 ? 'eager' : 'lazy'} // Load first 2 images eagerly
+          quality={80}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+        />
+        {/* Slide Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        {/* Slide Content */}
+        <div className="absolute bottom-6 left-6 text-white">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
+            {slide.title}
+          </h3>
+          {slide.description && (
+            <p className="text-sm sm:text-base text-gray-200 max-w-md">
+              {slide.description}
+            </p>
+          )}
+        </div>
+      </>
+    );
+
+    // Wrap in link if slide has a link
+    if (slide.link) {
+      return (
+        <Link 
+          href={slide.link}
+          className="absolute inset-0 block"
+          target={slide.link.startsWith('http') ? '_blank' : undefined}
+          rel={slide.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+        >
+          {slideContent}
+        </Link>
+      );
+    }
+
+    return slideContent;
+  };
+
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Our Work
+            {carouselData.fields.title || 'Our Work'}
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-            Explore our portfolio of successful projects and digital solutions.
+            {carouselData.fields.subtitle || 'Explore our portfolio of successful projects and digital solutions.'}
           </p>
         </div>
 
@@ -85,89 +160,82 @@ const CarouselSection = () => {
                   index === currentSlide ? 'opacity-100' : 'opacity-0'
                 }`}
               >
+                {renderSlideContent(slide, index)}
+              </div>
+            ))}
+          </div>
+
+          {/* Navigation Arrows - Only show if more than 1 slide */}
+          {slides.length > 1 && (
+            <>
+              <button
+                onClick={goToPrevious}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-200 z-10"
+                aria-label="Previous slide"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <button
+                onClick={goToNext}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-200 z-10"
+                aria-label="Next slide"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          {/* Slide Indicators - Only show if enabled and more than 1 slide */}
+          {showIndicators && slides.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 hidden lg:flex space-x-2">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    index === currentSlide
+                      ? 'bg-white scale-110'
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Thumbnail Navigation - Only show if enabled and more than 1 slide */}
+        {showThumbnails && slides.length > 1 && (
+          <div className="hidden lg:flex justify-center mt-8 space-x-4">
+            {slides.map((slide, index) => (
+              <button
+                key={slide.id}
+                onClick={() => goToSlide(index)}
+                className={`relative w-20 h-12 rounded-md overflow-hidden transition-all duration-200 ${
+                  index === currentSlide
+                    ? 'ring-2 ring-blue-500 scale-105'
+                    : 'opacity-60 hover:opacity-80'
+                }`}
+                aria-label={`View ${slide.title}`}
+              >
                 <Image
                   src={slide.src}
                   alt={slide.alt}
                   fill
                   className="object-cover"
-                  loading={index <= 1 ? 'eager' : 'lazy'}
-                  quality={80}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                  loading="lazy"
+                  quality={60}
+                  sizes="80px"
                 />
-                {/* Slide Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                {/* Slide Title */}
-                <div className="absolute bottom-6 left-6 text-white">
-                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-                    {slide.title}
-                  </h3>
-                </div>
-              </div>
+              </button>
             ))}
           </div>
-
-          {/* Navigation Arrows */}
-          <button
-            onClick={goToPrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-200 z-10"
-            aria-label="Previous slide"
-          >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <button
-            onClick={goToNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 sm:p-3 rounded-full shadow-lg transition-all duration-200 z-10"
-            aria-label="Next slide"
-          >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Slide Indicators - Hidden on Mobile/Tablet, Visible on Desktop */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 hidden lg:flex space-x-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                  index === currentSlide
-                    ? 'bg-white scale-110'
-                    : 'bg-white/50 hover:bg-white/75'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Thumbnail Navigation (Hidden on Mobile) */}
-        <div className="hidden lg:flex justify-center mt-8 space-x-4">
-          {slides.map((slide, index) => (
-            <button
-              key={slide.id}
-              onClick={() => goToSlide(index)}
-              className={`relative w-20 h-12 rounded-md overflow-hidden transition-all duration-200 ${
-                index === currentSlide
-                  ? 'ring-2 ring-blue-500 scale-105'
-                  : 'opacity-60 hover:opacity-80'
-              }`}
-            >
-              <Image
-                src={slide.src}
-                alt={slide.alt}
-                fill
-                className="object-cover"
-                loading="lazy"
-                quality={60}
-                sizes="80px"
-              />
-            </button>
-          ))}
-        </div>
+        )}
       </div>
     </section>
   );

@@ -5,6 +5,8 @@ export * from './navigation';
 export * from './ctaButton';
 export * from './companyLogo';
 export * from './heroSection';
+export * from './carouselSlide';
+export * from './carouselSection';
 
 // Model registry for deployment
 import { dropdownItemModel, DROPDOWN_ITEM_ID } from './dropdownItem';
@@ -13,6 +15,8 @@ import { navigationModel, NAVIGATION_ID } from './navigation';
 import { ctaButtonModel, CTA_BUTTON_ID } from './ctaButton';
 import { companyLogoModel, COMPANY_LOGO_ID } from './companyLogo';
 import { heroSectionModel, HERO_SECTION_ID } from './heroSection';
+import { carouselSlideModel, CAROUSEL_SLIDE_ID } from './carouselSlide';
+import { carouselSectionModel, CAROUSEL_SECTION_ID } from './carouselSection';
 import { ContentTypeProps } from 'contentful-management';
 
 export interface ModelDefinition {
@@ -31,26 +35,36 @@ export const modelRegistry: ModelDefinition[] = [
   {
     id: MENU_ITEM_ID,
     model: menuItemModel,
-    dependencies: [DROPDOWN_ITEM_ID] // Depends on dropdownItem
+    dependencies: [DROPDOWN_ITEM_ID]
   },
   {
     id: NAVIGATION_ID,
     model: navigationModel,
-    dependencies: [MENU_ITEM_ID] // Depends on menuItem
+    dependencies: [MENU_ITEM_ID]
   },
   {
     id: CTA_BUTTON_ID,
     model: ctaButtonModel,
-    dependencies: [] // Independent component
+    dependencies: []
   },
   {
     id: COMPANY_LOGO_ID,
     model: companyLogoModel,
-    dependencies: [] // Independent component
+    dependencies: []
   },
   {
     id: HERO_SECTION_ID,
     model: heroSectionModel,
-    dependencies: [CTA_BUTTON_ID, COMPANY_LOGO_ID] // Depends on both CTA and Company Logo
+    dependencies: [CTA_BUTTON_ID, COMPANY_LOGO_ID]
+  },
+  {
+    id: CAROUSEL_SLIDE_ID,
+    model: carouselSlideModel,
+    dependencies: [] // Independent component
+  },
+  {
+    id: CAROUSEL_SECTION_ID,
+    model: carouselSectionModel,
+    dependencies: [CAROUSEL_SLIDE_ID] // Depends on carousel slides
   }
 ];
