@@ -65,7 +65,7 @@ This project features a sophisticated **15-model content architecture** with hie
 
 ## 📋 Prerequisites
 
-- **Node.js** 18+ 
+- **Node.js** 18+ (currently using v20)
 - **npm** or **yarn**
 - **Contentful Account** (free tier available)
 - **Vercel Account** (for deployment)
