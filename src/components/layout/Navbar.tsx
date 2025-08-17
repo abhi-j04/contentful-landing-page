@@ -80,17 +80,15 @@ const Navbar = () => {
       });
   };
 
-  // Get logo data from Contentful
   const getLogoData = (): LogoData | null => {
     if (!navigationData?.fields.logo?.fields?.file) return null;
     
     const logo = navigationData.fields.logo;
     const file = logo.fields.file;
     
-    // Additional safety check and type assertion
     if (!file || !file.url) return null;
     
-    const details = file.details as any; // Type assertion for Contentful asset details
+    const details = file.details as any;
     
     return {
       url: `https:${file.url}`,
@@ -100,7 +98,6 @@ const Navbar = () => {
     };
   };
 
-  // Get CTA data from Contentful
   const getCTAData = (): CTAData | null => {
     if (!navigationData?.fields.ctaText) return null;
     

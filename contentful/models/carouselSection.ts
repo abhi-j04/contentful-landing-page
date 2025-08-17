@@ -41,7 +41,7 @@ export const carouselSectionModel: Omit<ContentTypeProps, 'sys'> = {
         ]
       },
       validations: [
-        { size: { min: 2, max: 10 } } // At least 2 slides, max 10
+        { size: { min: 2, max: 10 } }
       ]
     },
     {

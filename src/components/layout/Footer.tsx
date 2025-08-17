@@ -7,7 +7,7 @@ import { FooterSectionEntry } from '@/types/contentful';
 interface LinkData {
   label: string;
   href: string;
-  openInNewTab?: boolean | undefined; // Add | undefined
+  openInNewTab?: boolean | undefined;
   order: number;
 }
 
@@ -25,7 +25,7 @@ interface SocialData {
 }
 
 interface FooterProps {
-  initialData?: FooterSectionEntry | null | undefined; // Add | undefined
+  initialData?: FooterSectionEntry | null | undefined;
 }
 
 const Footer = ({ initialData }: FooterProps) => {
@@ -38,17 +38,18 @@ const Footer = ({ initialData }: FooterProps) => {
 
     return footerData.fields.linkGroups
       .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
-      .map(group => ({
+      .map((group) => ({
         title: group.fields.title,
         order: group.fields.order,
-        links: group.fields.links
-          ?.sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
-          .map(link => ({
-            label: link.fields.label,
-            href: link.fields.url,
-            openInNewTab: link.fields.openInNewTab,
-            order: link.fields.order
-          })) || []
+        links:
+          group.fields.links
+            ?.sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
+            .map((link) => ({
+              label: link.fields.label,
+              href: link.fields.url,
+              openInNewTab: link.fields.openInNewTab,
+              order: link.fields.order,
+            })) || [],
       }));
   };
 
@@ -57,11 +58,11 @@ const Footer = ({ initialData }: FooterProps) => {
 
     return footerData.fields.socialLinks
       .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
-      .map(social => ({
+      .map((social) => ({
         platform: social.fields.platform,
         url: social.fields.url,
         icon: social.fields.icon,
-        order: social.fields.order
+        order: social.fields.order,
       }));
   };
 
@@ -75,26 +76,35 @@ const Footer = ({ initialData }: FooterProps) => {
       dark: 'bg-gray-900 text-white',
       light: 'bg-gray-100 text-gray-900',
       blue: 'bg-blue-900 text-white',
-      custom: 'bg-gradient-to-br from-gray-900 to-blue-900 text-white'
+      custom: 'bg-gradient-to-br from-gray-900 to-blue-900 text-white',
     };
     return bgClasses[backgroundColor];
   };
 
   const SocialIcon = ({ icon }: { icon: string }) => {
     const iconPaths = {
-      twitter: "M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z",
-      linkedin: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 2a2 2 0 100 4 2 2 0 000-4z",
-      github: "M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22",
-      facebook: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z",
-      instagram: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z",
-      youtube: "M23 12s0-4-1-6c-1-1-2-1-3-1-4 0-10 0-10 0s-6 0-10 0c-1 0-2 0-3 1-1 2-1 6-1 6s0 4 1 6c1 1 2 1 3 1 4 0 10 0 10 0s6 0 10 0c1 0 2 0 3-1 1-2 1-6 1-6z",
-      dribbble: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z",
-      behance: "M6.5 17.5l1.5-4h3l1.5 4h2l-4-10h-2l-4 10h2z"
+      twitter:
+        'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z',
+      linkedin:
+        'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 2a2 2 0 100 4 2 2 0 000-4z',
+      github:
+        'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22',
+      facebook: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z',
+      instagram: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z',
+      youtube:
+        'M23 12s0-4-1-6c-1-1-2-1-3-1-4 0-10 0-10 0s-6 0-10 0c-1 0-2 0-3 1-1 2-1 6-1 6s0 4 1 6c1 1 2 1 3 1 4 0 10 0 10 0s6 0 10 0c1 0 2 0 3-1 1-2 1-6 1-6z',
+      dribbble: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z',
+      behance: 'M6.5 17.5l1.5-4h3l1.5 4h2l-4-10h-2l-4 10h2z',
     };
 
     return (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconPaths[icon as keyof typeof iconPaths]} />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d={iconPaths[icon as keyof typeof iconPaths]}
+        />
       </svg>
     );
   };
@@ -151,10 +161,14 @@ const Footer = ({ initialData }: FooterProps) => {
                 )}
                 <span className="text-xl font-bold">{footerData.fields.companyName}</span>
               </div>
-              <p className={`mb-4 leading-relaxed ${backgroundColor === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+              <p
+                className={`mb-4 leading-relaxed ${backgroundColor === 'light' ? 'text-gray-600' : 'text-gray-400'}`}
+              >
                 {footerData.fields.companyDescription}
               </p>
-              <div className={`text-sm space-y-1 ${backgroundColor === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+              <div
+                className={`text-sm space-y-1 ${backgroundColor === 'light' ? 'text-gray-600' : 'text-gray-400'}`}
+              >
                 <p>📧 {footerData.fields.email}</p>
                 {footerData.fields.phone && <p>📞 {footerData.fields.phone}</p>}
                 {footerData.fields.address && <p>📍 {footerData.fields.address}</p>}
@@ -168,11 +182,11 @@ const Footer = ({ initialData }: FooterProps) => {
                 <ul className="space-y-3">
                   {group.links.map((link) => (
                     <li key={link.label}>
-                      <Link 
+                      <Link
                         href={link.href}
                         className={`transition-colors duration-200 ${
-                          backgroundColor === 'light' 
-                            ? 'text-gray-600 hover:text-gray-900' 
+                          backgroundColor === 'light'
+                            ? 'text-gray-600 hover:text-gray-900'
                             : 'text-gray-400 hover:text-white'
                         }`}
                         target={link.openInNewTab ? '_blank' : undefined}
@@ -186,7 +200,7 @@ const Footer = ({ initialData }: FooterProps) => {
               </div>
             ))}
 
-            {/* Social Media - Show in 4th column or if less than 3 link groups */}
+            {/* Social Media */}
             {socialLinks.length > 0 && (
               <div className={linkGroups.length < 3 ? '' : 'lg:col-start-4'}>
                 <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
@@ -196,8 +210,8 @@ const Footer = ({ initialData }: FooterProps) => {
                       key={social.platform}
                       href={social.url}
                       className={`transition-colors duration-200 ${
-                        backgroundColor === 'light' 
-                          ? 'text-gray-600 hover:text-gray-900' 
+                        backgroundColor === 'light'
+                          ? 'text-gray-600 hover:text-gray-900'
                           : 'text-gray-400 hover:text-white'
                       }`}
                       aria-label={social.platform}
@@ -214,22 +228,26 @@ const Footer = ({ initialData }: FooterProps) => {
         </div>
 
         {/* Bottom Bar */}
-        <div className={`border-t py-6 ${backgroundColor === 'light' ? 'border-gray-300' : 'border-gray-800'}`}>
+        <div
+          className={`border-t py-6 ${backgroundColor === 'light' ? 'border-gray-300' : 'border-gray-800'}`}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-            <div className={`text-sm ${backgroundColor === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+            <div
+              className={`text-sm ${backgroundColor === 'light' ? 'text-gray-600' : 'text-gray-400'}`}
+            >
               © {currentYear} {footerData.fields.copyrightText}
             </div>
-            
+
             {/* Quick Links from first group */}
             {linkGroups.length > 0 && (
               <div className="flex flex-wrap justify-center sm:justify-end space-x-6 text-sm">
                 {linkGroups[0].links.slice(0, 3).map((link) => (
-                  <Link 
+                  <Link
                     key={link.label}
-                    href={link.href} 
+                    href={link.href}
                     className={`transition-colors duration-200 ${
-                      backgroundColor === 'light' 
-                        ? 'text-gray-600 hover:text-gray-900' 
+                      backgroundColor === 'light'
+                        ? 'text-gray-600 hover:text-gray-900'
                         : 'text-gray-400 hover:text-white'
                     }`}
                     target={link.openInNewTab ? '_blank' : undefined}
@@ -251,7 +269,12 @@ const Footer = ({ initialData }: FooterProps) => {
             aria-label="Back to top"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 10l7-7m0 0l7 7m-7-7v18"
+              />
             </svg>
           </button>
         )}

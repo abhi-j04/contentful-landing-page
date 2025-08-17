@@ -10,8 +10,8 @@ interface SlideData {
   src: string;
   alt: string;
   title: string;
-  description?: string | undefined; // Add | undefined
-  link?: string | undefined; // Add | undefined
+  description?: string | undefined;
+  link?: string | undefined;
   order: number;
 }
 
@@ -28,8 +28,8 @@ const CarouselSection = ({ initialData }: CarouselSectionProps) => {
     if (!carouselData?.fields.slides?.length) return [];
 
     return carouselData.fields.slides
-      .filter(slide => slide?.fields?.image?.fields?.file) // Filter out invalid slides
-      .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0)) // Sort by order
+      .filter(slide => slide?.fields?.image?.fields?.file)
+      .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
       .map(slide => ({
         id: slide.sys.id,
         src: `https:${slide.fields?.image?.fields?.file?.url}`,
@@ -119,7 +119,6 @@ const CarouselSection = ({ initialData }: CarouselSectionProps) => {
       </>
     );
 
-    // Wrap in link if slide has a link
     if (slide.link) {
       return (
         <Link 
@@ -165,7 +164,7 @@ const CarouselSection = ({ initialData }: CarouselSectionProps) => {
             ))}
           </div>
 
-          {/* Navigation Arrows - Only show if more than 1 slide */}
+          {/* Navigation Arrows */}
           {slides.length > 1 && (
             <>
               <button
@@ -190,7 +189,7 @@ const CarouselSection = ({ initialData }: CarouselSectionProps) => {
             </>
           )}
 
-          {/* Slide Indicators - Only show if enabled and more than 1 slide */}
+          {/* Slide Indicators */}
           {showIndicators && slides.length > 1 && (
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 hidden lg:flex space-x-2">
               {slides.map((_, index) => (
@@ -209,7 +208,7 @@ const CarouselSection = ({ initialData }: CarouselSectionProps) => {
           )}
         </div>
 
-        {/* Thumbnail Navigation - Only show if enabled and more than 1 slide */}
+        {/* Thumbnail Navigation */}
         {showThumbnails && slides.length > 1 && (
           <div className="hidden lg:flex justify-center mt-8 space-x-4">
             {slides.map((slide, index) => (

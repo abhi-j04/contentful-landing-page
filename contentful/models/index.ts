@@ -92,21 +92,21 @@ export const modelRegistry: ModelDefinition[] = [
   {
     id: FOOTER_LINK_ID,
     model: footerLinkModel,
-    dependencies: [] // Independent component
+    dependencies: []
   },
   {
     id: SOCIAL_LINK_ID,
     model: socialLinkModel,
-    dependencies: [] // Independent component
+    dependencies: []
   },
   {
     id: FOOTER_LINK_GROUP_ID,
     model: footerLinkGroupModel,
-    dependencies: [FOOTER_LINK_ID] // Depends on footer links
+    dependencies: [FOOTER_LINK_ID]
   },
   {
     id: FOOTER_SECTION_ID,
     model: footerSectionModel,
-    dependencies: [FOOTER_LINK_GROUP_ID, SOCIAL_LINK_ID] // Depends on groups and social links
+    dependencies: [FOOTER_LINK_GROUP_ID, SOCIAL_LINK_ID]
   }
 ];

@@ -11,7 +11,7 @@ export const getOptimizedImageUrl = (
   return url.toString();
 };
 
-// Format utilities
+// Format date utilities
 export const formatDate = (date: string): string => {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',

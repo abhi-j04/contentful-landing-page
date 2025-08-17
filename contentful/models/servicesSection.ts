@@ -41,7 +41,7 @@ export const servicesSectionModel: Omit<ContentTypeProps, 'sys'> = {
         ]
       },
       validations: [
-        { size: { min: 1, max: 12 } } // At least 1 service, max 12
+        { size: { min: 1, max: 12 } }
       ]
     },
     {

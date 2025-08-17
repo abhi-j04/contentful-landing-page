@@ -48,7 +48,7 @@ export async function fetchEntriesByType(
 }
 
 /**
- * Fetch single navigation entry
+ * Fetch navigation entry
  */
 export async function fetchNavigation(options: FetchOptions = {}) {
   const result = await fetchEntriesByType(CONTENT_TYPES.NAVIGATION, {

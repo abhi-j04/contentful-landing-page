@@ -8,7 +8,7 @@ interface CTAData {
   text: string;
   href: string;
   style: 'primary' | 'secondary' | 'outline';
-  openInNewTab?: boolean | undefined; // Add | undefined
+  openInNewTab?: boolean | undefined;
 }
 
 interface LogoData {
@@ -16,7 +16,7 @@ interface LogoData {
   name: string;
   url: string;
   alt: string;
-  website?: string | undefined; // Add | undefined
+  website?: string | undefined;
 }
 
 interface BackgroundImageData {
@@ -24,19 +24,13 @@ interface BackgroundImageData {
   desktop: { url: string; alt: string };
 }
 
-// Update component to accept props and remove client-side fetching
 interface HeroSectionProps {
   initialData?: HeroSectionEntry | null;
 }
 
 const HeroSection = ({ initialData }: HeroSectionProps) => {
-  // Use initialData directly, no loading state needed
   const heroData = initialData;
 
-  // Remove all loading/fetching logic
-  // Component renders immediately with server data
-
-  // Transform Contentful data to component format
   const getPrimaryCTA = (): CTAData | null => {
     if (!heroData?.fields.primaryCta) return null;
 
@@ -128,12 +122,10 @@ const HeroSection = ({ initialData }: HeroSectionProps) => {
   if (!heroData) {
     return (
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-100">
-        {/* Add placeholder image with proper dimensions */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-black animate-pulse" />
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-black/70 z-10" />
         <div className="relative z-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
           <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-            {/* Reserve exact space for content */}
             <div className="h-32 sm:h-40 md:h-48 lg:h-56 xl:h-64 bg-white/10 rounded animate-pulse" />
             <div className="h-16 sm:h-20 bg-white/10 rounded animate-pulse max-w-3xl mx-auto" />
             <div className="flex gap-4 justify-center pt-4 sm:pt-6 lg:pt-8">
@@ -156,22 +148,22 @@ const HeroSection = ({ initialData }: HeroSectionProps) => {
             alt={backgroundImages.mobile.alt}
             fill
             className="object-cover md:hidden"
-            priority={true} // Critical for LCP
+            priority={true}
             quality={75}
             sizes="100vw"
             placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..." // Add blur placeholder
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..."
           />
           <Image
             src={backgroundImages.desktop.url}
             alt={backgroundImages.desktop.alt}
             fill
             className="object-cover hidden md:block"
-            priority={true} // Critical for LCP
+            priority={true}
             quality={85}
             sizes="100vw"
             placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..." // Add blur placeholder
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..."
           />
         </>
       ) : (

@@ -34,13 +34,12 @@ const ServicesSection = ({ initialData }: ServicesSectionProps) => {
     },
   };
 
-  // Transform Contentful data to component format
   const getServices = (): ServiceData[] => {
     if (!servicesData?.fields.services?.length) return [];
 
     return servicesData.fields.services
-      .filter(service => service?.fields?.image?.fields?.file) // Filter out invalid services
-      .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0)) // Sort by order
+      .filter(service => service?.fields?.image?.fields?.file)
+      .sort((a, b) => (a.fields.order || 0) - (b.fields.order || 0))
       .map(service => ({
         id: service.sys.id,
         title: service.fields.title,

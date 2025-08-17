@@ -2,7 +2,6 @@ import { config } from 'dotenv';
 import { createClient } from 'contentful-management';
 import { modelRegistry } from '../../contentful/models';
 
-// Load environment variables
 config({ path: '.env.local' });
 
 const requireEnv = (k: string) => {
