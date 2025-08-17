@@ -2,7 +2,7 @@
 
 A modern, enterprise-grade landing page built with **Next.js 14**, **TypeScript**, **Tailwind CSS**, and **Contentful CMS**. This project demonstrates advanced web development practices, scalable architecture, and professional content management implementation.
 
-> **🌐 Live Demo:** [https://contentful-landing-page-r23h76yri-abhisheks-projects-f82e1975.vercel.app](https://contentful-landing-page-r23h76yri-abhisheks-projects-f82e1975.vercel.app)
+> 🚀 [View Live Site](https://contentful-landing-page.vercel.app)
 
 ## ✨ Key Features
 
