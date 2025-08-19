@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { BLOCKS, MARKS } from '@contentful/rich-text-types';
